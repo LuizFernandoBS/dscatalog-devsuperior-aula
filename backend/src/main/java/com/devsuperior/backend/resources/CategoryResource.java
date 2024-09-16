@@ -1,23 +1,24 @@
 package com.devsuperior.backend.resources;
 
-import com.devsuperior.backend.entities.Category;
+import com.devsuperior.backend.dtos.CategoryDTO;
+import com.devsuperior.backend.services.CategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
 @RequestMapping(value = "/categories")
 public class CategoryResource {
 
+    @Autowired
+    private CategoryService service;
+
     @GetMapping
-    public ResponseEntity<List<Category>> findAll() {
-        Category category = new Category(1L, "Electronics");
-        Category category1 = new Category(2L, "Books");
-        List<Category> categories = Arrays.asList(category, category1);
-        return ResponseEntity.ok().body(categories);
+    public ResponseEntity<List<CategoryDTO>> findAll() {
+        List<CategoryDTO> dtos = service.findAll();
+        return ResponseEntity.ok().body(dtos);
     }
 }
