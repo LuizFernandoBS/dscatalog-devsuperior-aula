@@ -2,7 +2,9 @@ package com.devsuperior.backend.dtos;
 
 import com.devsuperior.backend.entities.Category;
 
-public class CategoryDTO {
+import java.io.Serializable;
+
+public class CategoryDTO implements Serializable {
 
     private Long id;
     private String name;
@@ -17,5 +19,21 @@ public class CategoryDTO {
 
     public CategoryDTO(Category category) {
         this(category.getId(), category.getName());
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
