@@ -3,6 +3,9 @@ package com.devsuperior.backend.resources;
 import com.devsuperior.backend.dtos.CategoryDTO;
 import com.devsuperior.backend.services.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -18,9 +21,17 @@ public class CategoryResource {
     private CategoryService service;
 
     @GetMapping
-    public ResponseEntity<List<CategoryDTO>> findAll() {
-        List<CategoryDTO> dtos = service.findAll();
-        return ResponseEntity.ok().body(dtos);
+    public ResponseEntity<Page<CategoryDTO>> findAll(
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "linesPerPage", defaultValue = "12") Integer linesPerPage,
+            @RequestParam(value = "direction", defaultValue = "ASC") String direction,
+            @RequestParam(value = "orderBy", defaultValue = "name") String orderBy
+    ) {
+        PageRequest pageRequest = PageRequest.of(page, linesPerPage,
+                Sort.Direction.valueOf(direction), orderBy);
+        Page<CategoryDTO> pagedList = service.findAllPaged(pageRequest);
+
+        return ResponseEntity.ok().body(pagedList);
     }
 
     @GetMapping(value = "/{id}")
