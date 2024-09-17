@@ -1,5 +1,6 @@
 package com.devsuperior.backend.resources.exceptions;
 
+import com.devsuperior.backend.services.exceptions.DatabaseException;
 import com.devsuperior.backend.services.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,18 +14,25 @@ import java.time.Instant;
 public class ResourceExceptionHandler {
 
     private static final String RESOURCE_NOT_FOUND = "Resource not found";
+    private static final String DATABASE_EXCEPTION = "Database exception";
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<StandardError> resourceNotFound(ResourceNotFoundException e,
                                                           HttpServletRequest request) {
-        Instant time = Instant.now();
         HttpStatus status = HttpStatus.NOT_FOUND;
-        String message = e.getMessage();
-        String path = request.getRequestURI();
 
-        StandardError standardError = new StandardError(time, status.value(),
-                RESOURCE_NOT_FOUND, message, path);
+        StandardError standardError = new StandardError(Instant.now(), status.value(),
+                RESOURCE_NOT_FOUND, e.getMessage(), request.getRequestURI());
 
         return ResponseEntity.status(status).body(standardError);
+    }
+
+    @ExceptionHandler(DatabaseException.class)
+    public ResponseEntity<StandardError> integrityViolation(DatabaseException e,
+                                                            HttpServletRequest request) {
+
+        return ResponseEntity.ok().body(new StandardError(Instant.now(),
+                HttpStatus.BAD_REQUEST.value(), DATABASE_EXCEPTION, e.getMessage(),
+                request.getRequestURI()));
     }
 }
